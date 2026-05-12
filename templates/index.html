@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Success Predictor</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h1>Predict Success</h1>
+            
+            <form id="predictForm">
+                <div class="form-group">
+                    <label for="study_hours">Daily Study Hours (0.5 - 6.0)</label>
+                    <input type="number" id="study_hours" step="0.1" min="0.5" max="6.0" placeholder="e.g. 2.5" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="attendance_rate">Attendance Rate (50 - 100%)</label>
+                    <input type="number" id="attendance_rate" min="50" max="100" placeholder="e.g. 92" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="coursework_score">Coursework Score (0 - 60)</label>
+                    <input type="number" id="coursework_score" min="0" max="60" placeholder="e.g. 45" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="extracurricular">Extracurricular Activities</label>
+                    <select id="extracurricular" style="width: 100%; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--card-border); border-radius: 12px; padding: 0.75rem 1rem; color: white; font-size: 1rem;">
+                        <option value="1">Yes</option>
+                        <option value="0">No</option>
+                    </select>
+                </div>
+                
+                <button type="submit" id="submitBtn">Analyze Student</button>
+            </form>
+        </div>
+
+        <div class="card result-panel">
+            <div id="initialState">
+                <p style="color: var(--text-muted);">Enter student data to see the AI prediction</p>
+            </div>
+            
+            <div id="resultState" class="hidden">
+                <div class="result-circle" id="resultIcon">?</div>
+                <h2 class="result-text" id="resultStatus">Processing...</h2>
+                <p class="result-prob" id="resultProbability">Confidence: 0%</p>
+                <p id="resultMsg" style="margin-top: 1rem; color: var(--text-muted); font-size: 0.9rem;"></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('predictForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
+            const initialState = document.getElementById('initialState');
+            const resultState = document.getElementById('resultState');
+            const resultIcon = document.getElementById('resultIcon');
+            const resultStatus = document.getElementById('resultStatus');
+            const resultProb = document.getElementById('resultProbability');
+            const resultMsg = document.getElementById('resultMsg');
+            
+            // Show loading state
+            submitBtn.disabled = true;
+            submitBtn.innerText = 'Analyzing...';
+            initialState.classList.add('hidden');
+            resultState.classList.remove('hidden');
+            resultStatus.innerText = 'Analyzing...';
+            
+            const data = {
+                study_hours: parseFloat(document.getElementById('study_hours').value),
+                attendance_rate: parseFloat(document.getElementById('attendance_rate').value),
+                coursework_score: parseFloat(document.getElementById('coursework_score').value),
+                extracurricular_activities: parseInt(document.getElementById('extracurricular').value)
+            };
+
+            try {
+                const response = await fetch('/predict', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+                
+                // Update UI based on result
+                document.querySelector('.result-panel').className = 'card result-panel ' + (result.prediction === 1 ? 'status-pass' : 'status-fail');
+                resultIcon.innerText = result.prediction === 1 ? '✓' : '✕';
+                resultStatus.innerText = result.status;
+                resultProb.innerText = `Confidence: ${(result.probability * 100).toFixed(1)}%`;
+                
+                if (result.prediction === 1) {
+                    resultMsg.innerText = "The student is likely to pass based on the current metrics. Keep up the good work!";
+                } else {
+                    resultMsg.innerText = "The student might be at risk. Increasing study hours or attendance could improve the outcome.";
+                }
+
+            } catch (error) {
+                console.error('Error:', error);
+                resultStatus.innerText = 'Error';
+                resultMsg.innerText = 'Could not connect to the server.';
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerText = 'Analyze Student';
+            }
+        });
+    </script>
+</body>
+</html>
