@@ -87,9 +87,10 @@ Instead of a simple linear formula, we used realistic statistical distributions:
 ---
 
 ## ☁️ Deployment (Railway)
-The project is configured for [Railway](https://railway.app/).
-- Simply push to GitHub and connect the repository to Railway.
-- It will automatically use the `Procfile` and `runtime.txt`.
+The project is deployed and live at: **[https://predict-success.up.railway.app/](https://predict-success.up.railway.app/)**
+
+- Configured for [Railway](https://railway.app/).
+- Automatically uses `Procfile` and `runtime.txt` for deployment.
 
 ---
 
