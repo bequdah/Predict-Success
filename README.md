@@ -16,6 +16,7 @@ This project was developed for the **AI 350: Data Science** course at **Jordan U
 - **Synthetic Data Generation:** Custom script to generate realistic, non-linear student data (200 samples).
 - **Machine Learning Model:** Uses a `RandomForestClassifier` for robust predictions.
 - **FastAPI Backend:** High-performance API serving the model predictions.
+- **Mandatory Attendance Rule:** Integrated business logic that automatically fails students with attendance below 70%, overriding the model for academic compliance.
 - **Modern UI:** Responsive, glassmorphism-style interface for real-time interaction.
 - **Deployment Ready:** Configured for local execution and Railway cloud deployment.
 
