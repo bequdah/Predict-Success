@@ -37,6 +37,15 @@ def predict(input_data: PredictionInput):
     if model is None:
         raise HTTPException(status_code=500, detail="Model file not found. Please train the model first.")
     
+    # Check for hard attendance rule: < 70% is automatic fail
+    if input_data.attendance_rate < 70:
+        return {
+            "prediction": 0,
+            "status": "Failed (Attendance Penalty)",
+            "probability": 1.0,
+            "message": "Automatic fail due to low attendance (below 70%)."
+        }
+
     # Prepare the input data for prediction
     input_df = pd.DataFrame([input_data.dict()])
     
@@ -47,7 +56,8 @@ def predict(input_data: PredictionInput):
     return {
         "prediction": int(prediction[0]),
         "status": "Passed" if prediction[0] == 1 else "Failed",
-        "probability": float(probability[0][prediction[0]])
+        "probability": float(probability[0][prediction[0]]),
+        "message": "Prediction based on ML model analysis."
     }
 
 if __name__ == "__main__":

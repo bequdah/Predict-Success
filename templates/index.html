@@ -97,11 +97,8 @@
                 resultStatus.innerText = result.status;
                 resultProb.innerText = `Confidence: ${(result.probability * 100).toFixed(1)}%`;
                 
-                if (result.prediction === 1) {
-                    resultMsg.innerText = "The student is likely to pass based on the current metrics. Keep up the good work!";
-                } else {
-                    resultMsg.innerText = "The student might be at risk. Increasing study hours or attendance could improve the outcome.";
-                }
+                // Display the specific message from the API
+                resultMsg.innerText = result.message;
 
             } catch (error) {
                 console.error('Error:', error);
