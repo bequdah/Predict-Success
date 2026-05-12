@@ -94,5 +94,5 @@ The project is deployed and live at: **[https://predict-success.up.railway.app/]
 
 ---
 
-**Developed by:** [Your Name / bequdah]
+**Developed by:** Mohammad Al-Qudah
 **Instructor:** Dr. Malak Abdullah
